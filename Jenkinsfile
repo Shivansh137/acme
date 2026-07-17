@@ -21,11 +21,10 @@ pipeline {
                     reuseNode true
                 }
             }
-
             steps {
                 sh '''
-                dotnet restore services/OrderService
-                dotnet build services/OrderService --no-restore
+                    dotnet restore services/OrderService
+                    dotnet build services/OrderService --no-restore
                 '''
             }
         }
@@ -33,9 +32,9 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh '''
-                docker build \
-                  -t ${IMAGE_NAME}:${BUILD_NUMBER} \
-                  services/OrderService
+                    docker build \
+                        -t ${IMAGE_NAME}:${BUILD_NUMBER} \
+                        services/OrderService
                 '''
             }
         }
@@ -43,7 +42,7 @@ pipeline {
         stage('Push Image') {
             steps {
                 sh '''
-                docker push ${IMAGE_NAME}:${BUILD_NUMBER}
+                    docker push ${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
         }
