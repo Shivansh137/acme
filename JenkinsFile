@@ -1,6 +1,9 @@
 pipeline {
-
     agent any
+
+    environment {
+        IMAGE_NAME = "localhost:5000/orderservice"
+    }
 
     stages {
 
@@ -16,19 +19,20 @@ pipeline {
             }
         }
 
-        stage('Docker Build & Push') {
+        stage('Docker Build') {
             steps {
                 sh '''
                 docker build \
-                -t orderservice:${BUILD_NUMBER} \
-                services/OrderService
+                  -t ${IMAGE_NAME}:${BUILD_NUMBER} \
+                  services/OrderService
+                '''
+            }
+        }
 
-                docker tag \
-                orderservice:${BUILD_NUMBER} \
-                localhost:5000/orderservice:${BUILD_NUMBER}
-
-                docker push \
-                localhost:5000/orderservice:${BUILD_NUMBER}
+        stage('Push Image') {
+            steps {
+                sh '''
+                docker push ${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
         }
