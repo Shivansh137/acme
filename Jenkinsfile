@@ -1,4 +1,5 @@
 pipeline {
+
     agent any
 
     environment {
@@ -14,8 +15,18 @@ pipeline {
         }
 
         stage('Build') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/dotnet/sdk:8.0'
+                    reuseNode true
+                }
+            }
+
             steps {
-                sh 'dotnet build services/OrderService'
+                sh '''
+                dotnet restore services/OrderService
+                dotnet build services/OrderService --no-restore
+                '''
             }
         }
 
