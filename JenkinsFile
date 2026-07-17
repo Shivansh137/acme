@@ -1,0 +1,36 @@
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'dotnet build services/OrderService'
+            }
+        }
+
+        stage('Docker Build & Push') {
+            steps {
+                sh '''
+                docker build \
+                -t orderservice:${BUILD_NUMBER} \
+                services/OrderService
+
+                docker tag \
+                orderservice:${BUILD_NUMBER} \
+                localhost:5000/orderservice:${BUILD_NUMBER}
+
+                docker push \
+                localhost:5000/orderservice:${BUILD_NUMBER}
+                '''
+            }
+        }
+    }
+}
